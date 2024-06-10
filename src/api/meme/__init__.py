@@ -1,0 +1,1 @@
+from .meme_router import rt as meme_router
