@@ -2,7 +2,8 @@ import pytest
 
 from fastapi.testclient import TestClient
 
-from api import meme_route_factory
+from api import meme_rt
+from api.meme.dependensies import get_meme_service
 from services import MemeService
 
 from app import app_factory
@@ -37,8 +38,8 @@ def __create_app():
         def delete_meme(self, id: int):
             return
 
-    meme_rt = meme_route_factory(MockMemeService())
     app = app_factory([meme_rt])
+    app.dependency_overrides[get_meme_service] = lambda: MockMemeService()
     return app
 
 
@@ -68,10 +69,16 @@ def test_create_meme(client: TestClient):
     assert data == resp_body
 
 
-def update_meme(client: TestClient):
+def test_update_meme(client: TestClient):
     data = {"title": "new_title", "author": "new_author"}
-    resp = client.put("/memes", params=data)
+    resp = client.put("/memes/1", json=data)
     assert resp.status_code == 200
     resp_body: dict = resp.json()
     resp_body.pop("id", None)
     assert resp_body == data
+
+
+def test_delete_meme(client: TestClient):
+    
+    resp = client.delete('/memes/1')
+    assert resp.status_code == 200
