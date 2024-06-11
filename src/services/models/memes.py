@@ -22,4 +22,7 @@ class CreateMeme(Base):
     author: str
 
 
-class UpdateMeme(Base): ...
+class UpdateMeme(Base):
+    
+    title: str | None = None
+    author: str | None = None

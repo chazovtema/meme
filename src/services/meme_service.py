@@ -9,6 +9,9 @@ class MemeService(Protocol):
     def create_meme(self, title: str, author: str) -> Meme: ...
 
     # @abstractmethod
+    def get_meme(self, meme_id: int) -> Meme: ...
+
+    # @abstractmethod
     def get_memes(self, batch_number: int, batch_count: int) -> list[Meme]: ...
 
     # @abstractmethod
@@ -16,7 +19,7 @@ class MemeService(Protocol):
 
     # @abstractmethod
     def update_meme(
-        self, id: int, name: str | None = None, author: str | None = None
+        self, id: int, title: str | None = None, author: str | None = None
     ) -> Meme: ...
 
 
