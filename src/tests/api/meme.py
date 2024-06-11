@@ -19,12 +19,13 @@ def __create_app():
             return Meme(id=meme_id, title="test", author="test")
 
         def get_memes(self, batch_number: int, batch_count: int) -> list[Meme]:
-            start_ind = batch_number * batch_count
+            start_ind = (batch_number -1) * batch_count
+            start_ind += 1
             memes = [
                 Meme(id=start_ind + i, title="test", author="test")
                 for i in range(batch_count)
             ]
-            return memes
+            return memes, batch_count
 
         def update_meme(
             self, id: int, title: str | None = None, author: str | None = None
