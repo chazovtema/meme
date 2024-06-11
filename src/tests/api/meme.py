@@ -18,8 +18,10 @@ def __create_app():
         def get_meme(self, meme_id: int) -> Meme:
             return Meme(id=meme_id, title="test", author="test")
 
-        def get_memes(self, batch_number: int, batch_count: int) -> list[Meme]:
-            start_ind = (batch_number -1) * batch_count
+        def get_memes(
+            self, batch_number: int, batch_count: int
+        ) -> tuple[list[Meme], int]:
+            start_ind = (batch_number - 1) * batch_count
             start_ind += 1
             memes = [
                 Meme(id=start_ind + i, title="test", author="test")
@@ -80,6 +82,5 @@ def test_update_meme(client: TestClient):
 
 
 def test_delete_meme(client: TestClient):
-    
-    resp = client.delete('/memes/1')
+    resp = client.delete("/memes/1")
     assert resp.status_code == 200

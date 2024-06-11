@@ -54,7 +54,10 @@ class MemeServiceImp(MemeService):
             query = select(models.Meme).limit(batch_count).offset(offset)
             res = ses.scalars(query)
             count = ses.execute(select(func.count()).select_from(models.Meme))
-            return ([Meme.model_validate(i, from_attributes=True) for i in res], next(count)[0])
+            return (
+                [Meme.model_validate(i, from_attributes=True) for i in res],
+                next(count)[0],
+            )
 
     def update_meme(
         self, id: int, title: str | None = None, author: str | None = None
