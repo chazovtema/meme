@@ -1,1 +1,1 @@
-from .meme_router import rt as meme_router
+from .meme_route import meme_route_factory
