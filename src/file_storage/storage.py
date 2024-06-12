@@ -1,7 +1,7 @@
 from typing import Protocol
 from abc import abstractmethod
 
-from minio import Minio
+from minio import Minio # type: ignore
 
 
 class FileStorage(Protocol):

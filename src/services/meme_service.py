@@ -45,9 +45,9 @@ class MemeServiceImp(MemeService):
         with self.db.get_session() as ses:
             mem = models.Meme(title=title, author=author)
             ses.add(mem)
-            self.file_storage.upload_file(mem.id, image)
+            self.file_storage.upload_file(str(mem.id), image)
             ses.commit()
-            mem.image = image # for validating 
+            mem.image = image # type: ignore # for validating 
             return Meme.model_validate(
                 mem, from_attributes=True
             )
@@ -58,7 +58,7 @@ class MemeServiceImp(MemeService):
             if not res:
                 raise ValueError(f"No such meme with id {meme_id}")
             image = self.file_storage.get_file(str(meme_id))
-            res.image = image
+            res.image = image # type: ignore # for validating 
             return Meme.model_validate(res, from_attributes=True)
 
     def get_memes(self, batch_number: int, batch_count: int) -> tuple[list[Meme], int]:
@@ -70,7 +70,7 @@ class MemeServiceImp(MemeService):
             memes = []
             for i in res:
                 image = self.file_storage.get_file(str(i.id))
-                i.image = image
+                i.image = image # type: ignore # for validating 
                 memes.append(Meme.model_validate(i, from_attributes=True))
             return (
                 memes,
@@ -90,7 +90,7 @@ class MemeServiceImp(MemeService):
                 mem.author = author
             if image is not None:
                 self.file_storage.upload_file(str(id), image)
-            mem.image = self.file_storage.get_file(str(id))
+            mem.image = self.file_storage.get_file(str(id)) # type: ignore # for validating
             ses.commit()
             return Meme.model_validate(mem, from_attributes=True)
 
