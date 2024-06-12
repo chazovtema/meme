@@ -12,7 +12,7 @@ from services.models.memes import Meme
 
 def __create_app():
     class MockMemeService(MemeService):
-        def create_meme(self, title: str, author: str) -> Meme:
+        def create_meme(self, title: str, author: str, image: bytes) -> Meme:
             return Meme(id=1, title=title, author=author, image=b"")
 
         def get_meme(self, meme_id: int) -> Meme:
@@ -30,7 +30,11 @@ def __create_app():
             return memes, batch_count
 
         def update_meme(
-            self, id: int, title: str | None = None, author: str | None = None
+            self,
+            id: int,
+            title: str | None = None,
+            author: str | None = None,
+            image: bytes | None = None,
         ) -> Meme:
             if not title:
                 title = "test"

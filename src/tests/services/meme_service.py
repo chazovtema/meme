@@ -4,11 +4,24 @@ from services.meme_service import MemeServiceImp
 from database.db import DataBase
 from database import models
 
+from file_storage import FileStorage
+
+class MockFileStorage(FileStorage):
+    
+    def get_file(self, file_name: str) -> bytes:
+        return b'dGVzdA=='
+    
+    def delete_file(self, file_name: str) -> None:
+        return
+    
+    def upload_file(self, file_name: str, data: bytes) -> None:
+        return
+
 @pytest.fixture
 def service():
     db = DataBase("sqlite://")
     db.create()
-    serv = MemeServiceImp(db)
+    serv = MemeServiceImp(db, MockFileStorage())
     return serv
 
 @pytest.fixture
@@ -20,12 +33,12 @@ def big_service():
             (models.Meme(title='test', author='test') for _ in range(100))
         )
         ses.commit()
-    serv = MemeServiceImp(db)
+    serv = MemeServiceImp(db, MockFileStorage())
     return serv
 
 
 def test_create(service: MemeServiceImp):
-    meme = service.create_meme('Joke', 'John')
+    meme = service.create_meme('Joke', 'John', b'')
     assert meme.title == 'Joke' and meme.author == 'John'
     
 def test_get_meme(big_service: MemeServiceImp):
