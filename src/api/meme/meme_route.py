@@ -29,24 +29,22 @@ def get_memes(
 
 
 @rt.get("/memes/{meme_id}")
-def get_meme(
-    meme_id: MEME_ID, meme_service: MEME_SERVICE
-) -> memes.Meme:
+def get_meme(meme_id: MEME_ID, meme_service: MEME_SERVICE) -> memes.Meme:
     return meme_service.get_meme(meme_id)
 
 
 @rt.post("/memes", status_code=201)
-def create_meme(
-    meme_data: memes.CreateMeme, meme_service:  MEME_SERVICE
-) -> memes.Meme:
-    return meme_service.create_meme(meme_data.title, meme_data.author)
+def create_meme(meme_data: memes.CreateMeme, meme_service: MEME_SERVICE) -> memes.Meme:
+    return meme_service.create_meme(meme_data.title, meme_data.author, meme_data.image)
 
 
 @rt.put("/memes/{meme_id}")
 def update_meme(
     meme_id: MEME_ID, data: memes.UpdateMeme, meme_service: MEME_SERVICE
 ) -> memes.Meme:
-    return meme_service.update_meme(meme_id, title=data.title, author=data.author)
+    return meme_service.update_meme(
+        meme_id, title=data.title, author=data.author, image=data.image
+    )
 
 
 @rt.delete("/memes/{meme_id}")
