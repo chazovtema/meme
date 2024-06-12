@@ -45,12 +45,12 @@ class MemeServiceImp(MemeService):
         with self.db.get_session() as ses:
             mem = models.Meme(title=title, author=author)
             ses.add(mem)
+            ses.flush()
             self.file_storage.upload_file(str(mem.id), image)
             ses.commit()
-            mem.image = image # type: ignore # for validating 
-            return Meme.model_validate(
-                mem, from_attributes=True
-            )
+            mem.image = image  # type: ignore # for validating
+            model = Meme.model_validate(mem, from_attributes=True)
+            return model
 
     def get_meme(self, meme_id: int) -> Meme:
         with self.db.get_session() as ses:
@@ -58,7 +58,7 @@ class MemeServiceImp(MemeService):
             if not res:
                 raise ValueError(f"No such meme with id {meme_id}")
             image = self.file_storage.get_file(str(meme_id))
-            res.image = image # type: ignore # for validating 
+            res.image = image  # type: ignore # for validating
             return Meme.model_validate(res, from_attributes=True)
 
     def get_memes(self, batch_number: int, batch_count: int) -> tuple[list[Meme], int]:
@@ -70,7 +70,7 @@ class MemeServiceImp(MemeService):
             memes = []
             for i in res:
                 image = self.file_storage.get_file(str(i.id))
-                i.image = image # type: ignore # for validating 
+                i.image = image  # type: ignore # for validating
                 memes.append(Meme.model_validate(i, from_attributes=True))
             return (
                 memes,
@@ -78,7 +78,11 @@ class MemeServiceImp(MemeService):
             )
 
     def update_meme(
-        self, id: int, title: str | None = None, author: str | None = None, image: bytes | None = None
+        self,
+        id: int,
+        title: str | None = None,
+        author: str | None = None,
+        image: bytes | None = None,
     ) -> Meme:
         with self.db.get_session() as ses:
             mem = ses.scalar(select(models.Meme).where(models.Meme.id == id))
@@ -90,7 +94,7 @@ class MemeServiceImp(MemeService):
                 mem.author = author
             if image is not None:
                 self.file_storage.upload_file(str(id), image)
-            mem.image = self.file_storage.get_file(str(id)) # type: ignore # for validating
+            mem.image = self.file_storage.get_file(str(id))  # type: ignore # for validating
             ses.commit()
             return Meme.model_validate(mem, from_attributes=True)
 

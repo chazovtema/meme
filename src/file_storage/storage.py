@@ -1,7 +1,8 @@
 from typing import Protocol
 from abc import abstractmethod
 
-from minio import Minio # type: ignore
+from io import BytesIO
+from minio import Minio  # type: ignore
 
 
 class FileStorage(Protocol):
@@ -27,7 +28,7 @@ class MinioStorage(FileStorage):
             self.client.make_bucket(self.__bucket)
 
     def upload_file(self, file_name: str, data: bytes) -> None:
-        self.client.put_object(self.__bucket, file_name, data)
+        self.client.put_object(self.__bucket, file_name, BytesIO(data), len(data))
 
     def get_file(self, file_name: str) -> bytes:
         resp = self.client.get_object(self.__bucket, file_name)
