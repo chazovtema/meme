@@ -30,7 +30,10 @@ def get_memes(
 
 @rt.get("/memes/{meme_id}")
 def get_meme(meme_id: MEME_ID, meme_service: MEME_SERVICE) -> memes.Meme:
-    return meme_service.get_meme(meme_id)
+    try:
+        return meme_service.get_meme(meme_id)
+    except ValueError:
+        return Response(f'No such meme with id {meme_id}', 404)
 
 
 @rt.post("/memes", status_code=201)
@@ -42,12 +45,18 @@ def create_meme(meme_data: memes.CreateMeme, meme_service: MEME_SERVICE) -> meme
 def update_meme(
     meme_id: MEME_ID, data: memes.UpdateMeme, meme_service: MEME_SERVICE
 ) -> memes.Meme:
-    return meme_service.update_meme(
-        meme_id, title=data.title, author=data.author, image=data.image
-    )
+    try:
+        return meme_service.update_meme(
+            meme_id, title=data.title, author=data.author, image=data.image
+        )
+    except ValueError:
+        return Response(f'No such meme with id {meme_id}', 404)
 
 
 @rt.delete("/memes/{meme_id}")
 def delete_meme(meme_id: MEME_ID, meme_service: MEME_SERVICE):
-    meme_service.delete_meme(meme_id)
-    return Response()
+    try:
+        meme_service.delete_meme(meme_id)
+        return Response()
+    except ValueError:
+        return Response(f'No such meme with id {meme_id}', 404)

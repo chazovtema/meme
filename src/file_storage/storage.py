@@ -2,7 +2,7 @@ from typing import Protocol
 from abc import abstractmethod
 
 from io import BytesIO
-from minio import Minio  # type: ignore
+from minio import Minio, S3Error  # type: ignore
 
 
 class FileStorage(Protocol):
@@ -30,9 +30,16 @@ class MinioStorage(FileStorage):
     def upload_file(self, file_name: str, data: bytes) -> None:
         self.client.put_object(self.__bucket, file_name, BytesIO(data), len(data))
 
+
     def get_file(self, file_name: str) -> bytes:
-        resp = self.client.get_object(self.__bucket, file_name)
-        return resp.data
+        try:
+            resp = self.client.get_object(self.__bucket, file_name)
+            return resp.data
+        except S3Error:
+            raise ValueError(f'No such file: <{file_name}>')
 
     def delete_file(self, file_name: str) -> None:
-        self.client.remove_object(self.__bucket, file_name)
+        try:
+            self.client.remove_object(self.__bucket, file_name)
+        except S3Error:
+            raise ValueError(f'No such file: <{file_name}>')
