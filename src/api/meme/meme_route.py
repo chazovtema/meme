@@ -5,7 +5,6 @@ from pydantic import Field
 from fastapi import APIRouter, Response
 from services.models import memes
 
-from services.meme_service import MemeService
 from .dependensies import MEME_SERVICE
 
 MEME_ID: TypeAlias = Annotated[int, Field(gt=0)]
