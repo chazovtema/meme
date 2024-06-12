@@ -1,17 +1,17 @@
 services:
-  # meme_server:
-  #   build: .
-  #   environment:
-  #     - database_url=postgresql+psycopg2://postgres:test@127.0.0.1:5432/memes
-  #     - s3_host=127.0.0.1:9000
-  #     - s3_username=minio99
-  #     - s3_password=minio123
-  #   network_mode: "host"
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #     s3:
-  #       condition: service_healthy
+  meme_server:
+    build: .
+    environment:
+      - database_url=postgresql+psycopg2://postgres:test@127.0.0.1:5432/memes
+      - s3_host=127.0.0.1:9000
+      - s3_username=minio99
+      - s3_password=minio123
+    network_mode: "host"
+    depends_on:
+      db:
+        condition: service_healthy
+      s3:
+        condition: service_healthy
 
   
   db:
