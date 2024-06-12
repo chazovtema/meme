@@ -19,6 +19,7 @@ def get_memes(
     page_number: Annotated[int, Field(gt=0)] = 1,
     page_size: Annotated[int, Field(gt=0, le=100)] = 10,
 ) -> memes.ListMeme:
+    """Получить список всех мемов"""
     res, count = meme_service.get_memes(page_number, page_size)
     return memes.ListMeme(
         page_number=page_number,
@@ -30,6 +31,7 @@ def get_memes(
 
 @rt.get("/memes/{meme_id}")
 def get_meme(meme_id: MEME_ID, meme_service: MEME_SERVICE) -> memes.Meme:
+    """Получить конкретный мем по id"""
     try:
         return meme_service.get_meme(meme_id)
     except ValueError:
@@ -38,6 +40,7 @@ def get_meme(meme_id: MEME_ID, meme_service: MEME_SERVICE) -> memes.Meme:
 
 @rt.post("/memes", status_code=201)
 def create_meme(meme_data: memes.CreateMeme, meme_service: MEME_SERVICE) -> memes.Meme:
+    """Создать новый мем, картинка долна быть в формате base64"""
     return meme_service.create_meme(meme_data.title, meme_data.author, meme_data.image)
 
 
@@ -45,6 +48,7 @@ def create_meme(meme_data: memes.CreateMeme, meme_service: MEME_SERVICE) -> meme
 def update_meme(
     meme_id: MEME_ID, data: memes.UpdateMeme, meme_service: MEME_SERVICE
 ) -> memes.Meme:
+    """Обновляет мем по id, не обязательно заполнять все поля, а только интересующие"""
     try:
         return meme_service.update_meme(
             meme_id, title=data.title, author=data.author, image=data.image
@@ -55,6 +59,7 @@ def update_meme(
 
 @rt.delete("/memes/{meme_id}")
 def delete_meme(meme_id: MEME_ID, meme_service: MEME_SERVICE):
+    """Удаляет мем по id"""
     try:
         meme_service.delete_meme(meme_id)
         return Response()
