@@ -8,6 +8,8 @@ from .models.memes import Meme
 from database.db import DataBase
 from database import models
 
+from file_storage import MinioStorage
+
 
 class MemeService(Protocol):
     @abstractmethod
@@ -31,8 +33,9 @@ class MemeService(Protocol):
 
 
 class MemeServiceImp(MemeService):
-    def __init__(self, database: DataBase) -> None:
+    def __init__(self, database: DataBase, file_storage: MinioStorage) -> None:
         self.db = database
+        self.file_storage = file_storage
 
     def create_meme(self, title: str, author: str) -> Meme:
         with self.db.get_session() as ses:
