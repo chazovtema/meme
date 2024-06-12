@@ -8,7 +8,6 @@ from file_storage import MinioStorage
 from config import CONFIG
 
 
-@lru_cache
 def get_meme_service():
     db = DataBase(CONFIG.database_url)
     db.create()
@@ -17,5 +16,6 @@ def get_meme_service():
     )
     return MemeServiceImp(db, file_storage)
 
+service = get_meme_service() # creating service
 
-MEME_SERVICE = Annotated[MemeService, Depends(get_meme_service)]
+MEME_SERVICE = Annotated[MemeService, Depends(lambda: service)]
