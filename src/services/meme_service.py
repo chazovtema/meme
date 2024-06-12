@@ -54,7 +54,7 @@ class MemeServiceImp(MemeService):
 
     def get_meme(self, meme_id: int) -> Meme:
         with self.db.get_session() as ses:
-            res = ses.scalar(select(models.Meme))
+            res = ses.scalar(select(models.Meme).where(models.Meme.id == meme_id))
             if not res:
                 raise ValueError(f"No such meme with id {meme_id}")
             image = self.file_storage.get_file(str(meme_id))
@@ -64,7 +64,12 @@ class MemeServiceImp(MemeService):
     def get_memes(self, batch_number: int, batch_count: int) -> tuple[list[Meme], int]:
         with self.db.get_session() as ses:
             offset = batch_count * (batch_number - 1)
-            query = select(models.Meme).limit(batch_count).offset(offset)
+            query = (
+                select(models.Meme)
+                .order_by(models.Meme.id)
+                .limit(batch_count)
+                .offset(offset)
+            )
             res = ses.scalars(query)
             count = ses.execute(select(func.count()).select_from(models.Meme))
             memes = []
